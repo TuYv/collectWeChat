@@ -29,18 +29,29 @@ def setMonth(messages):
     yA = []
     tempAfterNightLength = 0
 
+    firstTimeObj = time.localtime(messages[0]['m_uiCreateTime'])
+    startDay = time.strftime("%y年%m月%d日 %H:%M", firstTimeObj)
     for msg in messages:
         timeObj = time.localtime(msg['m_uiCreateTime'])
         yearMonth = time.strftime("%y.%m", timeObj)
         yearMonthDay = time.strftime("%y.%m.%d", timeObj)
         hour = time.strptime("%h", timeObj)
+        dayTime = time.strftime("%y年%m月%d日 %H:%M", timeObj)
+
         if (hour < 5 & hour >= 0):
+            if(mostNightDay < dayTime):
+                mostNightDay =  dayTime
             if (tempAfterNightLength == 0):
                 afterNightStartDay = yearMonthDay
             else:
                 afterNightendDay = yearMonthDay
+                tempAfterNightLength+=1
+        elif(hour > 5 & hour < 8):
+            if (mostMorningDay > dayTime):
+                mostMorningDay = dayTime
+        else:
+            afterNightLength = max(tempAfterNightLength, afterNightLength)
 
-        startDay = time.strftime("%y年%m月%d日 %H:%M", timeObj)
         if (msg['m_nsFromUsr'] == toUser) :
             aDays.setdefault(yearMonth, 0)
             aDays[yearMonth] = aDays[yearMonth] + 1
